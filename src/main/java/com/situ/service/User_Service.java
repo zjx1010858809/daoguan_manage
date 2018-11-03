@@ -14,5 +14,9 @@ public interface User_Service {
 	
 	public int update(User u);
 	
+	public int resetPass(int id);
+	
 	public User getById(int id);
+	
+	public int del(int id);
 }

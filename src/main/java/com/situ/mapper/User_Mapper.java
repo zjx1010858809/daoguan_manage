@@ -2,6 +2,7 @@ package com.situ.mapper;
 
 import java.util.List;
 
+import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
@@ -26,7 +27,14 @@ public interface User_Mapper {
 	@Update("update user set nike=#{nike},name=#{name},sex=#{sex},age=#{age},birthday=#{birthday},course_id=#{course_id},status=#{status},dress=#{dress},times=#{times},comments=#{comments} where id=#{id}")
 	public int update(User u);
 	
+	//重置密码
+	@Update("update user set pass='123' where id=#{id}")
+	public int resetPass(int id);
+	
 	@Select(value = "select u.*,c.name cname from user u inner join course c on u.course_id=c.id where u.id=#{id}")
 	public User getById(int id);
+	
+	@Delete("delete from user where id=#{id}")
+	public int del(int id);
 	
 }

@@ -65,7 +65,7 @@ public class Operator_Controller {
 		return new JsonInfo(1, "修改成功！");
 	}
 	
-	//修改密码
+	//重置密码
 	@RequestMapping("resetPass")
 	protected @ResponseBody JsonInfo resetPass(int id) {
 		oservice.resetPass(id);

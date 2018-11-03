@@ -10,15 +10,24 @@
 
 </head>
 <body>
-	<div class="layui-inline" style="margin-left: 15px; margin-top: 10px">
-		<div class="demoTable">
-			<div class="layui-input-inline">
-				<input type="text" name="name" placeholder="请输入姓名..." class="layui-input" id="operator_Search">
+<form class="layui-form">
+	<div class="layui-form-item">
+			<div class="layui-inline" style="margin-left: 10px;margin-top: 10px;">
+				<select id="ChoiceCourse">
+      			</select>
 			</div>
-			<button class="layui-btn" data-type="reload" id="operatorSearch" style="margin-left:-4px">查询</button>
-		</div>
+			<div class="layui-inline" style="margin-top: 10px;">
+				<input type="text" placeholder="请输入姓名..." class="layui-input name">
+			</div>
+			<div class="layui-inline" style="margin-top: 10px;">
+				<input type="button" class="layui-btn" data-type="reload" id="searchUser" value="搜索">
+			</div>
+			<div class="layui-inline" style="margin-top: 10px;">
+				<input type="button" class="layui-btn" onclick="openwin('添加','../operator/operatorInsert.html','590','230')" value="新增">
+			</div>
 	</div>
-	<button class="layui-btn" style="margin-top: 10PX" onclick="openwin('添加','../operator/operatorInsert.html','590','230')">新增</button>
+</form>
+	
 	<table class="layui-hide" id="userTable" lay-filter="demo"></table>
 	<script type="text/html" id="userBar">
 		<a title="修改"><i class="fa fa-pencil" aria-hidden="true" lay-event="edit"></i></a>
@@ -28,14 +37,15 @@
 </body>
 <script>
 	var table;
-	layui.use(['table','layer'], function() {
+	layui.use(['table','layer','form'], function() {
 		var table = layui.table,
-		layer=layui.layer;
+		layer=layui.layer,
+		form=layui.form;
 		
 		table.render({
 			elem : '#userTable',
 			id : 'user_table',
-			height:390,
+			height:380,
 			url : '../User/index_json',
 			page : {
 				layout : [ 'limit', 'count', 'prev', 'page', 'next', 'skip' ], //自定义分页布局
@@ -59,260 +69,66 @@
 		
 		//active
 		var $ = layui.$, active = {
-			    noquery : function() {
-			    	table.reload('user_table', { 
+			    reload : function() {
+			    	table.reload('user_table', {
 						where : {
-							type : 0,
-							school_id : null,
-							college_id : null,
-							nameinfo : null,
-							telinfo : null,
-							glevel : null,
-							ylevel : null,
-							slevel : null,
+							course_id:$("#ChoiceCourse").val(),
+			    			uname:$(".name").val()
 						}
 					});
-			    },
-			  	nameinfo : function() {
-			  		if($(".name").val() == ""){
-						layer.msg("请输入姓名");
-					}else{
-						if($(".querySelect1").val() == "student"){
-							type = 0;
-						}else {
-							type = 1;
-						}
-			  		table.reload('user_table', {
-						where : {
-							type : type,
-							school_id : null,
-							college_id : null,
-							nameinfo : $(".name").val(),
-							telinfo : null,
-							glevel : null,
-							ylevel : null,
-							slevel : null,
-						}
-					});
-					}
-				},
-				telinfo : function() {
-					if($(".tel").val() == ""){
-						layer.msg("请输入电话");
-					}else{
-						if($(".querySelect1").val() == "student"){
-							type = 0;
-						}else {
-							type = 1;
-						}
-					table.reload('user_table', {
-						where : {
-							type : type,
-							school_id : null,
-							college_id : null,
-							nameinfo : null,
-							telinfo : $(".tel").val(),
-							glevel : null,
-							ylevel : null,
-							slevel : null,
-						}
-					});
-					}
-				},
-				glevel : function() {
-					if($(".querySelect1").val() == "student"){
-						type = 0;
-					}else {
-						type = 1;
-					}
-					table.reload('user_table', { 
-							where : {
-								type : type,
-								school_id : null,
-								college_id : null,
-								nameinfo : null,
-								telinfo : null,
-								glevel : $(".glevelSelect").val(),
-								ylevel : null,
-								slevel : null,
-							}
-						});
-				},
-				ylevel : function() {
-					if($(".querySelect1").val() == "student"){
-						type = 0;
-					}else {
-						type = 1;
-					}
-						table.reload('user_table', { 
-							where : {
-								type : type,
-								school_id : null,
-								college_id : null,
-								nameinfo : null,
-								telinfo : null,
-								glevel : null,
-								ylevel : $(".ylevelSelect").val(),
-								slevel : null,
-							}
-						});
-				},
-				slevel : function() {
-					if($(".querySelect1").val() == "student"){
-						type = 0;
-					}else {
-						type = 1;
-					}
-					table.reload('user_table', { 
-							where : {
-								type : type,
-								school_id : null,
-								college_id : null,
-								nameinfo : null,
-								telinfo : null,
-								glevel : null,
-								ylevel : null,
-								slevel : $(".slevelSelect").val(),
-							}
-						});
-				},
-				school : function() {
-					if($(".School").val() == ""){
-						layer.msg("请选择学校");
-					}else{
-						if($(".querySelect1").val() == "student"){
-							type = 0;
-						}else {
-							type = 1;
-						}
-						table.reload('user_table', { 
-							where : {
-								type : type,
-								school_id : $(".School").val(),
-								college_id : $(".College").val(),
-								nameinfo : null,
-								telinfo : null,
-								glevel : null,
-								ylevel : null,
-								slevel : null,
-							}
-						});
-					}
-				},
+			    }
 			};
 		
-		//点击查询
-		$('.select').on('click', function() {
-			if($(".querySelect1").val() == 'counselor'){
-				var querythis = $(".querySelect").val();
-				$('.select').attr("data-type",querythis);
-				
-			}else if($(".querySelect1").val() == 'student'){
-				var querythis = $(".querySelect11").val();
-				$('.select').attr("data-type",querythis);
-				
-			}else if($(".querySelect1").val() == 'noquery'){
-				var querythis = "noquery";
-				$('.select').attr("data-type",querythis);
-				
-			}
-			
-			var type = querythis;
-			active[type] ? active[type].call(this) : '';
+	//查询
+	$('#searchUser').on('click', function() {
+		var type = $(this).data('type');
+		active[type] ? active[type].call(this) : '';
 		});
-		
-		//监听user_querySelect点击事件
-		layui.use('form', function() {
-			var form = layui.form;
-			form.on('select(user_querySelect1)', function(data){
-				var query1 = $(".querySelect1").val();
-				$(".query1").css("display","none");
-				$(".query").css("display","none");
-				$("."+query1).css("display","block");
-				if(query1 == 'counselor'){
-					table.reload('user_table', {
-						where : {
-							type : 1,
-							school_id : null,
-							college_id : null,
-							nameinfo : null,
-							telinfo : null,
-							glevel : null,
-							ylevel : null,
-							slevel : null,
-						}
-					});
-				}else{
-					table.reload('user_table', {
-						where : {
-							type : 0,
-							school_id : null,
-							college_id : null,
-							nameinfo : null,
-							telinfo : null,
-							glevel : null,
-							ylevel : null,
-							slevel : null,
-						}
-					});
+	
+	
+		//自动填充课程
+		$.post("../User/course",function(result){
+			var courseObj = result;
+			$("#ChoiceCourse").html("");
+			for(var i = 0;i < courseObj.length;i++){
+				$("#ChoiceCourse").append("<option value="+courseObj[i]['id']+">"+courseObj[i]['name']+"</option>");
 				}
-			});
-			
-			form.on('select(user_querySelect11)', function(data){
-				var query = $(".querySelect11").val();
-				$(".query").css("display","none");
-				$("."+query).css("display","block");
-			});
-			
-			form.on('select(user_querySelect)', function(data){
-				var query = $(".querySelect").val();
-				$(".query").css("display","none");
-				$("."+query).css("display","block");
-			});
-			
-			$.post("../User/school",function(result){
-			   	var schoolObj = result;
-			   	for(var i = 0;i < schoolObj.length;i++){
-			   		$(".School").append("<option value="+schoolObj[i]['id']+">"+schoolObj[i]['name']+"</option>");
-			   	}
-			   	form.render('select');
+				form.render('select');
 			 });
-			
-			form.on('select(user_school)', function(data){
-				var school_id = $(".School").val();
-				$(".college").css("display","block");
-				$.post("../User/college?school_id="+school_id,function(result){
-				   	var collegeObj = result;
-				   	$(".College").html("");
-				   	for(var i = 0;i < collegeObj.length;i++){
-				   		$(".College").append("<option value="+collegeObj[i]['id']+">"+collegeObj[i]['name']+"</option>");
-				   	}
-				   	form.render('select');
-				 });
-			});
-
-			
-		});
+	
 		
 		
 		//监听工具条
 		 table.on('tool(demo)', function(obj){
 		    var data = obj.data;
 		    var id = data.id;
-		    if(obj.event === 'detail'){
-		      layer.open({
-					type : 2,
-					title:'用户信息',
-					area : [ '700px','420px' ],
-					fixed : false, //不固定
-					maxmin : false,
-					content : '../User/userView?id='+id,
-				});
+		    if(obj.event === 'resetPass'){
+		    	layer.confirm('确认重置密码？',{title:'重置'}, function(index){
+		        	$.post("../User/resetPass",{id:id},function (res){
+		        		if(res.status==1){
+		        			layer.msg(res.url);
+		        		}else{
+		        			layer.msg(res.url)
+		        		}
+		        	});
+		        	layer.close(index);
+		            });
 		  	} else if(obj.event === 'del'){
-		      layer.confirm('真的删除行么', function(index){
-		        obj.del();
-		        layer.close(index);
-		      });
+		  		layer.confirm('确认删除？',{title:'删除'}, function(index){
+		  			$.ajax({
+		  				url:'../User/del',
+		  				data:{id:id},
+		  				success:function(res){
+		  					if(res.status==1){
+		  						layer.msg(res.url);
+			    				table.reload('user_table');
+			    			}else{
+			    				layer.msg(res.url);
+			    				table.reload('user_table');
+			    				}
+		  					}
+		  				});
+		  			});
 		    } else if(obj.event === 'edit'){
 		    	layer.open({
 					type : 2,

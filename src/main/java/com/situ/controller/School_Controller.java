@@ -5,13 +5,13 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
 
-import com.situ.service.School_Service;
+import com.situ.service.Course_Service;
 
 @Controller
 @RequestMapping("Activity_School")
 public class School_Controller {
 	@Autowired
-	School_Service sservice;
+	Course_Service sservice;
 	
 	//进入正文
 		@RequestMapping("index")

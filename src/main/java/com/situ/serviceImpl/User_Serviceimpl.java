@@ -41,5 +41,15 @@ public class User_Serviceimpl implements User_Service {
 		return mapper.getById(id);
 	}
 
+	@Override
+	public int del(int id) {
+		return mapper.del(id);
+	}
+
+	@Override
+	public int resetPass(int id) {
+		return mapper.resetPass(id);
+	}
+
 	
 }
