@@ -23,7 +23,7 @@
 				<input type="button" class="layui-btn" data-type="reload" id="searchUser" value="搜索">
 			</div>
 			<div class="layui-inline" style="margin-top: 10px;">
-				<input type="button" class="layui-btn" onclick="openwin('添加','../operator/operatorInsert.html','590','230')" value="新增">
+				<input type="button" class="layui-btn" onclick="openwin('添加','../User/add','700','420')" value="新增">
 			</div>
 	</div>
 </form>
@@ -45,7 +45,7 @@
 		table.render({
 			elem : '#userTable',
 			id : 'user_table',
-			height:380,
+			height:379,
 			url : '../User/index_json',
 			page : {
 				layout : [ 'limit', 'count', 'prev', 'page', 'next', 'skip' ], //自定义分页布局
@@ -89,7 +89,6 @@
 		//自动填充课程
 		$.post("../User/course",function(result){
 			var courseObj = result;
-			$("#ChoiceCourse").html("");
 			for(var i = 0;i < courseObj.length;i++){
 				$("#ChoiceCourse").append("<option value="+courseObj[i]['id']+">"+courseObj[i]['name']+"</option>");
 				}
@@ -136,7 +135,10 @@
 					area : [ '700px','420px' ],
 					fixed : false, //不固定
 					maxmin : false,
-					content : '../User/userUpdate?id='+id,
+					content : '../User/edit?id='+id,
+					end:function(){
+						table.reload('user_table');
+					}
 				});
 		    }
 		 });
@@ -151,7 +153,7 @@
 			area : [ width + 'px', height + 'px' ],
 			fixed : false, //不固定
 			maxmin : false,
-			content : content,
+			content : content
 		});
 	}
 	

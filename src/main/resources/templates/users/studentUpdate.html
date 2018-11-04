@@ -7,69 +7,33 @@
 <script type="text/javascript" src="../js/jquery-2.1.0.min.js"></script>
 <script type="text/javascript" src="../assets/layui/layui.js"></script>
 <script>
-	layui.use('form', function() {
-		var form = layui.form
-	});
-	
-	layui.use('form', function() {
-		var form = layui.form;
-		//学校选择下拉框
-		$.post("../User/school",function(result){
-		   	var schoolObj = result;
-		   	for(var i = 0;i < schoolObj.length;i++){
-		   		
-		   		if(${userUpdate.school_id}==schoolObj[i]['id']){
-		   			$("#userSchool").append("<option selected='selected' value="+schoolObj[i]['id']+">"+schoolObj[i]['name']+"</option>");
-		   		}else{
-		   			$("#userSchool").append("<option value="+schoolObj[i]['id']+">"+schoolObj[i]['name']+"</option>");
-		   		}
-		   	}
-		   	form.render('select');
-		  });
-		
-		//学院选择下拉框--联动
-		form.on('select(schoolselect)', function(data){
-			if(data.value.length<1){
-				$("#userCollege").html("");
-			}else{
-		
-		$.post("../User/college?school_id="+data.value+"",function(result){
-		   	var collegeObj = result;
-		   	$("#userCollege").html("");
-		   	for(var j = 0;j < collegeObj.length;j++){
-		   		
-		   		if(${userUpdate.college_id}==collegeObj[j]['id']){
-		   			$("#userCollege").append("<option selected='selected' value="+collegeObj[j]['id']+">"+collegeObj[j]['name']+"</option>");
-		   		}else{
-		   			$("#userCollege").append("<option value="+collegeObj[j]['id']+">"+collegeObj[j]['name']+"</option>");
-		   		}
-		   		
-		   		
-		   		$("#userCollege").append("<option value="+collegeObj[j]['id']+">"+collegeObj[j]['name']+"</option>");
-		   	}
-		   	form.render('select');
-		  });
-			}
-		});
-		
+	layui.use(['form','layer'], function() {
+		var form = layui.form,
+		layer=layui.layui
 	});
 </script>
 </head>
 <body>
 	<form class="layui-form" action="">
-		<div class="layui-form-item" style="margin-top: 25px">
+		<div class="layui-form-item" style="margin-top: 5px">
 			<div class="layui-inline">
-				<label class="layui-form-label">用户名：</label>
+				<label class="layui-form-label">姓名*：</label>
 				<div class="layui-input-inline">
-					<input type="text" name="nike" class="layui-input" value="${userUpdate.nike}" disabled="disabled">
-					<input type="hidden" name="id" class="layui-input" value="${userUpdate.id}">
-					<input type="hidden" name="type" class="layui-input" value="${userUpdate.type}">
+					<#if userUpdate??>
+						<input type="text" name="name" class="layui-input name" value="${userUpdate.name}">
+					<#else>
+						<input type="text" name="name" class="layui-input name" value="">
+					</#if>
 				</div>
 			</div>
 			<div class="layui-inline">
-				<label class="layui-form-label">姓名：</label>
+				<label class="layui-form-label">手机号*：</label>
 				<div class="layui-input-inline">
-					<input type="text" name="name" class="layui-input" value="${userUpdate.name}">
+					<#if userUpdate??>
+						<input type="text" name="nike" class="layui-input nike" value="${userUpdate.nike}">
+					<#else>
+						<input type="text" name="nike" class="layui-input nike" value="">
+					</#if>
 				</div>
 			</div>
 		</div>
@@ -77,10 +41,14 @@
 			<div class="layui-inline">
 				<label class="layui-form-label">性别：</label>
 				<div class="layui-input-inline">
-				<select name="sex" lay-verify="required">
+				<select name="sex" class="sex">
 				<#list ["男","女"] as r>
-      				<#if userUpdate.sex==r_index>
-        				<option value="${r_index}" selected="selected">${r}</option>
+					<#if userUpdate??>
+      					<#if userUpdate.sex==r_index>
+        					<option value="${r_index}" selected="selected">${r}</option>
+        				<#else>
+        					<option value="${r_index}">${r}</option>
+        				</#if>
         			<#else>
         				<option value="${r_index}">${r}</option>
         			</#if>
@@ -89,114 +57,124 @@
 				</div>
 			</div>
 			<div class="layui-inline">
-				<label class="layui-form-label">电话：</label>
+				<label class="layui-form-label">年龄*：</label>
 				<div class="layui-input-inline">
-					<input type="tel" name="tel" value="${userUpdate.tel}" class="layui-input">
+					<#if userUpdate??>
+						<input type="tel" name="age" value="${userUpdate.age}" class="layui-input age">
+					<#else>
+						<input type="tel" name="age" value="" class="layui-input age">
+					</#if>
 				</div>
 			</div>
 		</div>
-		<div class="layui-form-item" style="margin-top: 25px">
+		<div class="layui-form-item">
 			<div class="layui-inline">
-				<label class="layui-form-label">QQ：</label>
+				<label class="layui-form-label">生日：</label>
 				<div class="layui-input-inline">
-					<input type="tel" name="qq" value="${userUpdate.qq}" class="layui-input">
+					<#if userUpdate??>
+						<input type="text" name="birthday" value="${userUpdate.birthday}" class="layui-input birthday">
+					<#else>
+						<input type="text" name="birthday" value="" class="layui-input birthday">
+					</#if>
+				</div>
+			</div>
+			<div class="layui-inline">
+				<label class="layui-form-label">课程：</label>
+				<div class="layui-input-inline">
+					<select class="course_id" name="course_id">
+					<#list courselist as courselist>
+						<#if userUpdate??>
+							<#if userUpdate.course_id==courselist.id>
+								<option selected="selected" value="${courselist.id}">${courselist.name}</option>
+							<#else>
+								<option value="${courselist.id}">${courselist.name}</option>
+							</#if>
+						<#else>
+							<option value="${courselist.id}">${courselist.name}</option>
+						</#if>
+					</#list>
+					</select>
+				</div>
+			</div>
+		</div>
+		<div class="layui-form-item">
+			<div class="layui-inline">
+				<label class="layui-form-label">地址：</label>
+				<div class="layui-input-inline">
+					<#if userUpdate??>
+						<input type="text" name="dress" value="${userUpdate.dress}" class="layui-input dress">
+					<#else>
+						<input type="text" name="dress" value="" class="layui-input dress">
+					</#if>
 				</div>
 			</div>
 			
-			<div class="layui-inline">
-				<label class="layui-form-label">专业班级：</label>
-				<div class="layui-input-inline">
-					<input type="text" name="classinfo"  value="${userUpdate.classinfo}" class="layui-input">
-				</div>
-			</div>
 		</div>
-		<div class="layui-form-item">
-			<div class="layui-inline">
-				<label class="layui-form-label">报名状态：</label>
-				<div class="layui-input-inline">
-					<select name="slevel" lay-verify="required">
-					<#list ["未联系","已联系","预报名","已报名","终结"] as r>
-      					<#if userUpdate.slevel==r_index>
-        					<option value="${r_index}" selected="selected">${r}</option>
-        				<#else>
-        					<option value="${r_index}">${r}</option>
-        				</#if>
-        			</#list>
-					</select>
-				</div>
-			</div>
-			<div class="layui-inline">
-				<label class="layui-form-label">目标意向：</label>
-				<div class="layui-input-inline">
-					<select name="ylevel" lay-verify="required">
-					<#list ["未定","升本","考研","考公"] as r>
-      					<#if userUpdate.slevel==r_index>
-        					<option value="${r_index}" selected="selected">${r}</option>
-        				<#else>
-        					<option value="${r_index}">${r}</option>
-        				</#if>
-        			</#list>
-					</select>
-				</div>
-			</div>
-		</div>
-		<div class="layui-form-item">
-			<div class="layui-inline">
-				<label class="layui-form-label">关注度：</label>
-				<div class="layui-input-inline">
-					<select name="glevel" lay-verify="required">
-					<#list ["A","B","C","D","N","Y"] as r>
-      					<#if userUpdate.glevel==r_index>
-        					<option value="${r_index}" selected="selected">${r}</option>
-        				<#else>
-        					<option value="${r_index}">${r}</option>
-        				</#if>
-        			</#list>
-					</select>
-				</div>
-			</div>
-			<div class="layui-inline">
-				<label class="layui-form-label">状态：</label>
-				<div class="layui-input-inline">
-					<select name="status" lay-verify="required">
-					<#list ["正常","禁用","过期"] as r>
-      					<#if userUpdate.status==r_index>
-        					<option value="${r_index}" selected="selected">${r}</option>
-        				<#else>
-        					<option value="${r_index}">${r}</option>
-        				</#if>
-        			</#list>
-					</select>
-				</div>
-			</div>
-		</div>
-		<div class="layui-form-item">
-			<div class="layui-inline">
-				<label class="layui-form-label">相关信息：</label>
-				<div class="layui-input-inline">
-					<input type="text" name="info" value="${userUpdate.info}" class="layui-input">
-				</div>
-			</div>
-		</div>	
-		<div class="layui-form-item layui-form-text">
+		
+		<div class="layui-form-text">
 			<label class="layui-form-label">备注：</label>
 			<div class="layui-input-block" style="margin-right:50px">
-				<textarea placeholder="请输入内容" class="layui-textarea" name="comments">${userUpdate.comments}</textarea>
+				<#if userUpdate??>
+					<textarea placeholder="请输入内容" class="layui-textarea comments" name="comments">${userUpdate.comments}</textarea>
+				<#else>
+					<textarea placeholder="请输入内容" class="layui-textarea comments" name="comments"></textarea>
+				</#if>
 			</div>
 		</div>
 		<div class="layui-form-item">
 			<div class="layui-input-block" style="text-align: center;">
-				<input class="layui-btn" href="javascript:;" onclick="userUpdate();" lay-filter="demo1" type="button" value="提交">
+				<#if userUpdate??>
+					<input class="layui-btn" href="javascript:;" onclick="userUpdate();" lay-filter="demo1" type="button" value="提交">
+					<input type="hidden" name="id" class="layui-input" value="${userUpdate.id}">
+				<#else>
+					<input class="layui-btn" href="javascript:;" onclick="userInsert();" lay-filter="demo1" type="button" value="提交">
+				</#if>
+				
 				<button type="reset" onclick="userClose();" class="layui-btn layui-btn-primary">返回</button>
 			</div>
 		</div>
 		<script type="text/javascript">
+	
+	//用户新增
+	function userInsert(){
+		var nike=$(".nike").val();
+		var name=$(".name").val();
+		var sex=$(".sex").val();
+		var age=$(".age").val();
+		var birthday=$(".birthday").val();
+		var course_id=$(".course_id").val();
+		var dress=$(".dress").val();
+		var comments=$(".comments").val();
+		
+		if(name==""||nike==""||age==""){
+			layer.msg("请填写必选项");
+		}else{
+			$.ajax({
+				url:'../User/insert',
+				type:'post',
+				data:{nike:nike,name:name,sex:sex,age:age,birthday:birthday,course_id:course_id,dress:dress,comments:comments},
+				success:function(res){
+					if(res.status==1){
+						var index=parent.layer.getFrameIndex(window.name);
+						parent.layer.close(index);
+						parent.location.reload();
+						layer.msg(res.url);
+					}else{
+						var index=parent.layer.getFrameIndex(window.name);
+						parent.layer.close(index);
+						layer.msg(res.url);
+					}
+				}
+			});
+		}
+	}
+	
+	//用户修改
 	function userUpdate(){
 		$.post("../User/update",$('.layui-form').serialize(),function (json){
 			if(json.status>0){
 				var index=parent.layer.getFrameIndex(window.name);
 				parent.layer.close(index);
-				parent.location.reload();
 			} else {
 				alert(json.url);
 			} 
@@ -205,7 +183,6 @@
 	function userClose(){
 				var index=parent.layer.getFrameIndex(window.name);
 				parent.layer.close(index);
-				parent.location.reload();
 	}
 	</script>
 	</form>	

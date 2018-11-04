@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.ModelAndView;
 
 import com.situ.entity.Course;
 import com.situ.entity.User;
@@ -61,6 +62,49 @@ public class User_Controller {
 	@ResponseBody
 	public List<Course> course(){
 		return cservice.selectall();
+	}
+	
+	//进入新增页面
+	@RequestMapping("add")
+	public ModelAndView add() {
+		ModelAndView m=new ModelAndView();
+		
+		m.addObject("courselist",cservice.selectall());
+		m.setViewName("users/studentUpdate");
+		return m;
+	}
+	
+	//新增
+	@RequestMapping("insert")
+	public @ResponseBody JsonInfo insert(User u) {
+		int i=service.insert(u);
+		if(i==1) {
+			return new JsonInfo(1, "新增成功");
+		}else {
+			return new JsonInfo(0,"请重新操作");
+		}
+	}
+	
+	//进入修改页面
+	@RequestMapping("edit")
+	public ModelAndView edit(int id) {
+		ModelAndView m=new ModelAndView();
+		User user=service.getById(id);
+		m.addObject("userUpdate",user);
+		m.addObject("courselist",cservice.selectall());
+		m.setViewName("users/studentUpdate");
+		return m;
+	}
+	
+	//修改
+	@RequestMapping("update")
+	public @ResponseBody JsonInfo update(User u) {
+		int i=service.update(u);
+		if(i==1) {
+			return new JsonInfo(1,"修改成功");
+		}else {
+			return new JsonInfo(0,"请重新操作");
+		}
 	}
 	
 	//删除

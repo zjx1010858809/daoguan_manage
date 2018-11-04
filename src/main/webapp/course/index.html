@@ -14,8 +14,8 @@ layui.use(['table','layer'], function(){
 	var layer=layui.layer;
 });
 
-//新增学校
-  function addSchool(title,content,width,height) {
+//新增课程
+  function addCourse(title,content,width,height) {
 	  
 		layer.open({
 			type : 2,
@@ -34,27 +34,27 @@ layui.use(['table','layer'], function(){
 
 
 <div style="text-align: center;">
-<button class="layui-btn" onclick="addSchool('新增','../Activity_School/add',320,200);" style="float:left; margin: 0px 0px 0px 10px">新增</button>
+<button class="layui-btn" onclick="addCourse('新增','../Course/add',320,300);" style="float:left; margin: 0px 0px 0px 10px">新增</button>
 
 <div style="display: inline;">
-  搜索学校：
+  课程搜索：
   <div class="layui-inline">
-    <input class="layui-input" name="id" id="schoolName" placeholder="请输入学校名..." autocomplete="off">
+    <input class="layui-input" name="id" id="schoolName" placeholder="请输入课程名..." autocomplete="off">
   </div>
-  <button class="layui-btn" data-type="reload" id="searchSchool">搜索</button>
+  <button class="layui-btn" data-type="reload" id="searchCourse">搜索</button>
 </div>
 
 
 
 </div>
 
-<script type="text/html" id="barSchool">
+<script type="text/html" id="barCourse">
   <a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
   <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
 </script>
 
 
-<table class="layui-hide" id="Schooltable" lay-filter="Schooltable"></table>
+<table class="layui-hide" id="Coursetable" lay-filter="Coursetable"></table>
  
 
 
@@ -66,28 +66,29 @@ layui.use(['table','layer'], function(){
   
 
   table.render({
-    elem: '#Schooltable'
-    ,url:'../Activity_School/index_json'
+    elem: '#Coursetable'
+    ,url:'../Course/index_json'
     ,title: '学校学院管理'
     ,height:398
-    ,id:'schoolTable'
+    ,id:'Coursetable'
     ,groups: 1 //只显示 1 个连续页码
 	,first: false //不显示首页
 	,last: false //不显示尾页
 	,page:{layout: ['limit', 'count', 'prev', 'page', 'next', 'skip'] }//自定义分页布局
     ,cols: [[
-      {field:'id', title:'ID', width:259,align:'center'}
-      ,{field:'name', title:'学校', width:270,sort: true,align:'center'}
-      ,{fixed: 'right', title:'操作', toolbar: '#barSchool', width:250,align:'center'}
+      {field:'id', title:'ID', width:200,sort:true,align:'center'}
+      ,{field:'name', title:'课程名', width:219,sort: true,align:'center'}
+      ,{field:'comments', title:'备注', width:210,align:'center'}
+      ,{fixed: 'right', title:'操作', toolbar: '#barCourse', width:150,align:'center'}
     ]]
   });
 //监听事件
-  table.on('tool(Schooltable)', function(obj){
+  table.on('tool(Coursetable)', function(obj){
 	    var data = obj.data;
 	    if(obj.event === 'del'){
 	      layer.confirm('真的删除行么', function(index){
 	    	  $.ajax({
-	    		 url:'../Activity_School/delete',
+	    		 url:'../Course/delete',
 	    		 type:'post',
 	    		 data:{id:data.id},
 	    		 success:function(res){
@@ -107,10 +108,10 @@ layui.use(['table','layer'], function(){
 	      layer.open({
 				type : 2,
 				title:'编辑',
-				area : ['320px','200px' ],
+				area : ['320px','300px' ],
 				fixed : false, //不固定
 				maxmin : false,
-				content : '../Activity_School/edit?id='+data.id,
+				content : '../Course/edit?id='+data.id,
 			});
 	    }
 	  });
@@ -119,7 +120,7 @@ layui.use(['table','layer'], function(){
   var $ = layui.$, active = {
   	reload : function() {
   		//执行重载
-  		table.reload('schoolTable', { 
+  		table.reload('Coursetable', { 
   			where : {
   				name : $("#schoolName").val()
   				//glevelSelect
@@ -129,18 +130,13 @@ layui.use(['table','layer'], function(){
   };
 
   //查询
-  $('#searchSchool').on('click', function() {
+  $('#searchCourse').on('click', function() {
   	var type = $(this).data('type');
   	active[type] ? active[type].call(this) : '';
   });
  
  
- 
- 
- 
 });
-
-
 
 </script>
 
