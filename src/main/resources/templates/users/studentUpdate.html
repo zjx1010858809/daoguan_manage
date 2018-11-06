@@ -9,7 +9,7 @@
 <script>
 	layui.use(['form','layer'], function() {
 		var form = layui.form,
-		layer=layui.layui
+		layer=layui.layer
 	});
 </script>
 </head>
@@ -72,9 +72,9 @@
 				<label class="layui-form-label">生日：</label>
 				<div class="layui-input-inline">
 					<#if userUpdate??>
-						<input type="text" name="birthday" value="${userUpdate.birthday}" class="layui-input birthday">
+						<input type="text" name="birthday" class="layui-input birthday" id="choicebirthday" value="${userUpdate.birthday}">
 					<#else>
-						<input type="text" name="birthday" value="" class="layui-input birthday">
+						<input type="text" name="birthday" class="layui-input birthday" id="choicebirthday">
 					</#if>
 				</div>
 			</div>
@@ -184,6 +184,17 @@
 				var index=parent.layer.getFrameIndex(window.name);
 				parent.layer.close(index);
 	}
+	
+	layui.use('laydate',function(){
+		var laydate=layui.laydate;
+		
+		laydate.render({
+		    elem: '#choicebirthday'
+		    ,type: 'date'
+		    ,format: 'MM-dd'
+		  });
+	})
+	
 	</script>
 	</form>	
 </body>
