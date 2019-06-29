@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+<link rel="stylesheet" href="../assets/layui/css/layui.css" />
+<link rel="stylesheet" href="../assets/font-awesome-4.7.0/css/font-awesome.min.css">
+<script src="../js/jquery-2.1.0.min.js"></script>
+<script type="text/javascript" src="../assets/layui/layui.js"></script>
+
+</head>
+<body>
+<form class="layui-form">
+	<div class="layui-form-item">
+			<div class="layui-inline" style="margin-left: 10px;margin-top: 10px;">
+				<select id="ChoiceCourse">
+      			</select>
+			</div>
+			<div class="layui-inline" style="margin-top: 10px;">
+				<input type="text" placeholder="请输入姓名..." class="layui-input name">
+			</div>
+			<div class="layui-inline" style="margin-top: 10px;">
+				<input type="button" class="layui-btn" data-type="reload" id="searchUser" value="搜索">
+			</div>
+			<div class="layui-inline" style="margin-top: 10px;">
+				<input type="button" class="layui-btn" onclick="openwin('添加','../User/add','700','420')" value="新增">
+			</div>
+	</div>
+</form>
+	
+	<table class="layui-hide" id="userTable" lay-filter="demo"></table>
+	<script type="text/html" id="userBar">
+		<a title="修改"><i class="fa fa-pencil" aria-hidden="true" lay-event="edit"></i></a>
+		<a title="重置密码"><i class="fa fa-repeat" aria-hidden="true" lay-event="resetPass"></i></a>
+		<a title="删除"><i class="fa fa-minus" aria-hidden="true" lay-event="del"></i></a>
+	</script>
+</body>
+<script>
+	var table;
+	layui.use(['table','layer','form'], function() {
+		var table = layui.table,
+		layer=layui.layer,
+		form=layui.form;
+		
+		table.render({
+			elem : '#userTable',
+			id : 'user_table',
+			height:379,
+			url : '../User/index_json',
+			page : {
+				layout : [ 'limit', 'count', 'prev', 'page', 'next', 'skip' ], //自定义分页布局
+				groups : 1,//只显示 1 个连续页码
+				first : false, //不显示首页
+				last : false, //不显示尾页
+			},
+			cols : [[ 
+					{field : 'name',width : 120,title : '姓名',align:'center',sort:true}, 
+					{field : 'sexlist',width : 70,title : '性别',align:'center',sort:true}, 
+					{field : 'age',width : 70,title : '年龄',align:'center',sort:true}, 
+					{field : 'birthday',width : 80,title : '生日',align:'center',sort:true},
+					{field : 'nike',width : 120,title : '手机号',align:'center'},
+					{field : 'cname',width : 120,title : '课程名',align:'center',sort:true},
+					{field : 'dress',width : 180,title : '地址',align:'center'}, 
+					{field : 'times',width : 100,title : '上课次数',align:'center',sort:true},
+					{field : 'comments',width : 120,title : '备注',align:'center'},
+					{fixed : 'right',title : '操作',toolbar : '#userBar',width : 80,align:'center'}, 
+			]]
+		});
+		
+		//active
+		var $ = layui.$, active = {
+			    reload : function() {
+			    	table.reload('user_table', {
+						where : {
+							course_id:$("#ChoiceCourse").val(),
+			    			uname:$(".name").val()
+						}
+					});
+			    }
+			};
+		
+	//查询
+	$('#searchUser').on('click', function() {
+		var type = $(this).data('type');
+		active[type] ? active[type].call(this) : '';
+		});
+	
+	
+		//自动填充课程
+		$.post("../User/course",function(result){
+			var courseObj = result;
+			for(var i = 0;i < courseObj.length;i++){
+				$("#ChoiceCourse").append("<option value="+courseObj[i]['id']+">"+courseObj[i]['name']+"</option>");
+				}
+				form.render('select');
+			 });
+	
+		
+		
+		//监听工具条
+		 table.on('tool(demo)', function(obj){
+		    var data = obj.data;
+		    var id = data.id;
+		    if(obj.event === 'resetPass'){
+		    	layer.confirm('确认重置密码？',{title:'重置'}, function(index){
+		        	$.post("../User/resetPass",{id:id},function (res){
+		        		if(res.status==1){
+		        			layer.msg(res.url);
+		        		}else{
+		        			layer.msg(res.url)
+		        		}
+		        	});
+		        	layer.close(index);
+		            });
+		  	} else if(obj.event === 'del'){
+		  		layer.confirm('确认删除？',{title:'删除'}, function(index){
+		  			$.ajax({
+		  				url:'../User/del',
+		  				data:{id:id},
+		  				success:function(res){
+		  					if(res.status==1){
+		  						layer.msg(res.url);
+			    				table.reload('user_table');
+			    			}else{
+			    				layer.msg(res.url);
+			    				table.reload('user_table');
+			    				}
+		  					}
+		  				});
+		  			});
+		    } else if(obj.event === 'edit'){
+		    	layer.open({
+					type : 2,
+					title:'用户信息',
+					area : [ '700px','420px' ],
+					fixed : false, //不固定
+					maxmin : false,
+					content : '../User/edit?id='+id,
+					end:function(){
+						table.reload('user_table');
+					}
+				});
+		    }
+		 });
+		
+	});
+	
+	//新增
+	function openwin(title, content, width, height) {
+		layer.open({
+			type : 2,
+			title : title,
+			area : [ width + 'px', height + 'px' ],
+			fixed : false, //不固定
+			maxmin : false,
+			content : content
+		});
+	}
+	
+</script>
+</html>

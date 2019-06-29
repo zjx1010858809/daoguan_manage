@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>项目二</title>
+<link rel="stylesheet" href="../assets/layui/css/layui.css" />
+<script type="text/javascript" src="../js/jquery-2.1.0.min.js"></script>
+<script type="text/javascript" src="../assets/layui/layui.js"></script>
+<script>
+	layui.use(['form','layer'], function() {
+		var form = layui.form,
+		layer=layui.layer
+	});
+</script>
+</head>
+<body>
+	<form class="layui-form" action="">
+		<div class="layui-form-item" style="margin-top: 5px">
+			<div class="layui-inline">
+				<label class="layui-form-label">姓名*：</label>
+				<div class="layui-input-inline">
+					<#if userUpdate??>
+						<input type="text" name="name" class="layui-input name" value="${userUpdate.name}">
+					<#else>
+						<input type="text" name="name" class="layui-input name" value="">
+					</#if>
+				</div>
+			</div>
+			<div class="layui-inline">
+				<label class="layui-form-label">手机号*：</label>
+				<div class="layui-input-inline">
+					<#if userUpdate??>
+						<input type="text" name="nike" class="layui-input nike" value="${userUpdate.nike}">
+					<#else>
+						<input type="text" name="nike" class="layui-input nike" value="">
+					</#if>
+				</div>
+			</div>
+		</div>
+		<div class="layui-form-item">
+			<div class="layui-inline">
+				<label class="layui-form-label">性别：</label>
+				<div class="layui-input-inline">
+				<select name="sex" class="sex">
+				<#list ["男","女"] as r>
+					<#if userUpdate??>
+      					<#if userUpdate.sex==r_index>
+        					<option value="${r_index}" selected="selected">${r}</option>
+        				<#else>
+        					<option value="${r_index}">${r}</option>
+        				</#if>
+        			<#else>
+        				<option value="${r_index}">${r}</option>
+        			</#if>
+        		</#list>
+				</select>
+				</div>
+			</div>
+			<div class="layui-inline">
+				<label class="layui-form-label">年龄*：</label>
+				<div class="layui-input-inline">
+					<#if userUpdate??>
+						<input type="tel" name="age" value="${userUpdate.age}" class="layui-input age">
+					<#else>
+						<input type="tel" name="age" value="" class="layui-input age">
+					</#if>
+				</div>
+			</div>
+		</div>
+		<div class="layui-form-item">
+			<div class="layui-inline">
+				<label class="layui-form-label">生日：</label>
+				<div class="layui-input-inline">
+					<#if userUpdate??>
+						<input type="text" name="birthday" class="layui-input birthday" id="choicebirthday" value="${userUpdate.birthday}">
+					<#else>
+						<input type="text" name="birthday" class="layui-input birthday" id="choicebirthday">
+					</#if>
+				</div>
+			</div>
+			<div class="layui-inline">
+				<label class="layui-form-label">课程：</label>
+				<div class="layui-input-inline">
+					<select class="course_id" name="course_id">
+					<#list courselist as courselist>
+						<#if userUpdate??>
+							<#if userUpdate.course_id==courselist.id>
+								<option selected="selected" value="${courselist.id}">${courselist.name}</option>
+							<#else>
+								<option value="${courselist.id}">${courselist.name}</option>
+							</#if>
+						<#else>
+							<option value="${courselist.id}">${courselist.name}</option>
+						</#if>
+					</#list>
+					</select>
+				</div>
+			</div>
+		</div>
+		<div class="layui-form-item">
+			<div class="layui-inline">
+				<label class="layui-form-label">地址：</label>
+				<div class="layui-input-inline">
+					<#if userUpdate??>
+						<input type="text" name="dress" value="${userUpdate.dress}" class="layui-input dress">
+					<#else>
+						<input type="text" name="dress" value="" class="layui-input dress">
+					</#if>
+				</div>
+			</div>
+			
+		</div>
+		
+		<div class="layui-form-text">
+			<label class="layui-form-label">备注：</label>
+			<div class="layui-input-block" style="margin-right:50px">
+				<#if userUpdate??>
+					<textarea placeholder="请输入内容" class="layui-textarea comments" name="comments">${userUpdate.comments}</textarea>
+				<#else>
+					<textarea placeholder="请输入内容" class="layui-textarea comments" name="comments"></textarea>
+				</#if>
+			</div>
+		</div>
+		<div class="layui-form-item">
+			<div class="layui-input-block" style="text-align: center;">
+				<#if userUpdate??>
+					<input class="layui-btn" href="javascript:;" onclick="userUpdate();" lay-filter="demo1" type="button" value="提交">
+					<input type="hidden" name="id" class="layui-input" value="${userUpdate.id}">
+				<#else>
+					<input class="layui-btn" href="javascript:;" onclick="userInsert();" lay-filter="demo1" type="button" value="提交">
+				</#if>
+				
+				<button type="reset" onclick="userClose();" class="layui-btn layui-btn-primary">返回</button>
+			</div>
+		</div>
+		<script type="text/javascript">
+	
+	//用户新增
+	function userInsert(){
+		var nike=$(".nike").val();
+		var name=$(".name").val();
+		var sex=$(".sex").val();
+		var age=$(".age").val();
+		var birthday=$(".birthday").val();
+		var course_id=$(".course_id").val();
+		var dress=$(".dress").val();
+		var comments=$(".comments").val();
+		
+		if(name==""||nike==""||age==""){
+			layer.msg("请填写必选项");
+		}else{
+			$.ajax({
+				url:'../User/insert',
+				type:'post',
+				data:{nike:nike,name:name,sex:sex,age:age,birthday:birthday,course_id:course_id,dress:dress,comments:comments},
+				success:function(res){
+					if(res.status==1){
+						var index=parent.layer.getFrameIndex(window.name);
+						parent.layer.close(index);
+						parent.location.reload();
+						layer.msg(res.url);
+					}else{
+						var index=parent.layer.getFrameIndex(window.name);
+						parent.layer.close(index);
+						layer.msg(res.url);
+					}
+				}
+			});
+		}
+	}
+	
+	//用户修改
+	function userUpdate(){
+		$.post("../User/update",$('.layui-form').serialize(),function (json){
+			if(json.status>0){
+				var index=parent.layer.getFrameIndex(window.name);
+				parent.layer.close(index);
+			} else {
+				alert(json.url);
+			} 
+		});
+	}
+	function userClose(){
+				var index=parent.layer.getFrameIndex(window.name);
+				parent.layer.close(index);
+	}
+	
+	layui.use('laydate',function(){
+		var laydate=layui.laydate;
+		
+		laydate.render({
+		    elem: '#choicebirthday'
+		    ,type: 'date'
+		    ,format: 'MM-dd'
+		  });
+	})
+	
+	</script>
+	</form>	
+</body>
+</html>

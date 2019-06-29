@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title></title>
+<link rel="stylesheet" href="../assets/layui/css/layui.css" />
+<script src="../assets/layui/layui.js"></script>
+<script type="text/javascript" src="../js/jquery-2.1.0.min.js"></script>
+</head>
+<body>
+<div class="layui-form-item" style="margin-left: -10px;margin-top: 20px;">
+    
+    <div class="layui-inline">
+      <label class="layui-form-label">课程名*：</label>
+      <div class="layui-input-block" style="width: 190px;">
+      <#if courselist??>
+        <input type="text" name="name" class="layui-input cname" value="${courselist.name}">
+        <#else>
+        <input type="text" name="name" class="layui-input cname" value="">
+        </#if>
+      </div>
+    </div>
+    
+    <div class="layui-form-text">
+			<label class="layui-form-label">备注：</label>
+			<div class="layui-input-block" style="margin-right:50px">
+				<#if courselist??>
+					<textarea placeholder="请输入内容" style="width: 190px;" class="layui-textarea comments" name="comments">${courselist.comments}</textarea>
+				<#else>
+					<textarea placeholder="请输入内容" style="width: 190px;" class="layui-textarea comments" name="comments"></textarea>
+				</#if>
+			</div>
+		</div>
+</div>
+
+<div class="layui-input-block">
+	<#if courselist??>
+		<button class="layui-btn" onclick="editSchool();">立即提交</button>
+		<input type="hidden" class="courseid" value="${courselist.id}">
+	<#else>
+		<button class="layui-btn" onclick="addSchool();">立即提交</button>
+		</#if>
+</div>
+ 
+</body>
+<script type="text/javascript">
+layui.use('layer',function(){
+	var layer=layui.layer;
+});
+//新增
+function addSchool(){
+	var name=$(".cname").val();
+	var comments=$(".comments").val();
+	
+	if(name==""){
+		layer.msg('请填写必选项');
+	}else{
+		$.ajax({
+			url:'insert',
+			type:'post',
+			data:{name:name,comments:comments},
+			success:function(res){
+				if(res.status==1){
+					var index=parent.layer.getFrameIndex(window.name);
+					parent.layer.close(index);
+					parent.location.reload();
+					layer.msg(res.url);
+				}else{
+					var index=parent.layer.getFrameIndex(window.name);
+					parent.layer.close(index);
+					parent.location.reload();
+					layer.msg(res.url);
+				}
+			}
+		});
+	}
+}
+//修改
+function editSchool(){
+	var name=$(".cname").val();
+	var comments=$(".comments").val();
+	var id=$(".courseid").val();
+	
+	if(name==""){
+		layer.msg('请填写必选项');
+	}else{
+		$.ajax({
+			url:'update',
+			type:'post',
+			data:{name:name,comments:comments,id:id},
+			success:function(res){
+				if(res.status==1){
+					var index=parent.layer.getFrameIndex(window.name);
+					parent.layer.close(index);
+					parent.location.reload();
+					layer.msg(res.url);
+				}else{
+					var index=parent.layer.getFrameIndex(window.name);
+					parent.layer.close(index);
+					parent.location.reload();
+					layer.msg(res.url);
+				}
+				
+			}
+		});
+	}
+}
+
+</script>
+
+</html>
